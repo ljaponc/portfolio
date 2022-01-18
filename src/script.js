@@ -171,6 +171,7 @@ const tick = () =>
         starMesh.position.x = .02 * elapsedTime
     }
     starMesh.rotation.x = -.01 * elapsedTime
+    starMesh.rotation.y = -.03 * elapsedTime
 
     
     // Update Orbital Controls
