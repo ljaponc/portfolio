@@ -165,10 +165,10 @@ const tick = () =>
     sphere.rotation.z = .5 * (targetY - sphere.rotation.x)
 
     if(mouseX > 0){
-        starMesh.position.y = .02 * elapsedTime
+        starMesh.rotation.y = .02 * targetX
     }
     if(mouseY > 0){
-        starMesh.position.x = .02 * elapsedTime
+        starMesh.rotation.x = .02 * targetY
     }
     starMesh.rotation.x = -.01 * elapsedTime
     starMesh.rotation.y = -.03 * elapsedTime
