@@ -19,7 +19,16 @@ const scene = new THREE.Scene()
 // Objects
 const geometry = new THREE.SphereBufferGeometry( .5, 64, 64)
 
+const starfield = new THREE.BufferGeometry;
+const starCount = 10000;
 
+const starArray = new Float32Array(starCount * 3);
+
+for(let i = 0; i < starCount*3; i++){
+    starArray[i] = (Math.random() - 0.5) * 20;
+}
+
+starfield.setAttribute('position', new THREE.BufferAttribute(starArray, 3));
 // Materials
 
 const material = new THREE.MeshStandardMaterial()
@@ -28,9 +37,14 @@ material.roughness = 0.2
 material.normalMap = normalTexture
 material.color = new THREE.Color(0x292929)
 
+const starMaterial = new THREE.PointsMaterial({
+    size: 0.005
+})
+
 // Mesh
 const sphere = new THREE.Mesh(geometry,material)
-scene.add(sphere)
+const starMesh = new THREE.Points(starfield,starMaterial)
+scene.add(sphere, starMesh)
 
 // Lights
 
@@ -149,6 +163,16 @@ const tick = () =>
     sphere.rotation.y = .5 * (targetX - sphere.rotation.y)
     sphere.rotation.x = .5 * (targetY - sphere.rotation.x)
     sphere.rotation.z = .5 * (targetY - sphere.rotation.x)
+
+    if(mouseX > 0){
+        starMesh.position.y = .02 * elapsedTime
+    }
+    if(mouseY > 0){
+        starMesh.position.x = .02 * elapsedTime
+    }
+    starMesh.rotation.x = -.01 * elapsedTime
+
+    
     // Update Orbital Controls
     // controls.update()
 
