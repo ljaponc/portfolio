@@ -63,7 +63,7 @@ const moonMat = new THREE.MeshBasicMaterial({map: moonTexture})
 const sphere = new THREE.Mesh(geometry,earthMat)
 const starMesh = new THREE.Points(starfield,starMaterial)
 const moon = new THREE.Mesh(geometry1,moonMat)
-moon.position.set(2,0,-15)
+moon.position.set(0,0,-5)
 sphere.add(moon)
 scene.add(sphere, starMesh)
 
