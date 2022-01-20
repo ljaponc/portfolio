@@ -1,12 +1,17 @@
 import './style.css'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import { PointLight } from 'three'
 
 //Loader 
 const textureLoader = new THREE.TextureLoader()
 
 const normalTexture = textureLoader.load("/textures/golfpravi.png")
+
+const earthTexture = textureLoader.load('/textures/zemlja.jpg')
+
+const moonTexture = textureLoader.load('/textures/moon.jpg')
+
 // Debug
 const gui = new dat.GUI()
 
@@ -19,6 +24,8 @@ const scene = new THREE.Scene()
 // Objects
 const geometry = new THREE.SphereBufferGeometry( .5, 64, 64)
 
+const geometry1 = new THREE.SphereBufferGeometry( .4, 64, 64)
+
 const starfield = new THREE.BufferGeometry;
 const starCount = 10000;
 
@@ -29,51 +36,84 @@ for(let i = 0; i < starCount*3; i++){
 }
 
 starfield.setAttribute('position', new THREE.BufferAttribute(starArray, 3));
+
+
 // Materials
 
+//planet
 const material = new THREE.MeshStandardMaterial()
 material.metalness = 0.9
 material.roughness = 0.2
 material.normalMap = normalTexture
 material.color = new THREE.Color(0x292929)
 
+//stars
 const starMaterial = new THREE.PointsMaterial({
     size: 0.005
 })
 
+//earth 
+const earthMat = new THREE.MeshStandardMaterial({map: earthTexture})
+
+//moon
+const moonMat = new THREE.MeshBasicMaterial({map: moonTexture})
+
+
 // Mesh
-const sphere = new THREE.Mesh(geometry,material)
+const sphere = new THREE.Mesh(geometry,earthMat)
 const starMesh = new THREE.Points(starfield,starMaterial)
+const moon = new THREE.Mesh(geometry1,moonMat)
+moon.position.set(2,0,-15)
+sphere.add(moon)
 scene.add(sphere, starMesh)
 
 // Lights
-
+//white
 const pointLight = new THREE.PointLight(0xffffff, 0.5)
 pointLight.position.x = 2
 pointLight.position.y = 3
 pointLight.position.z = 4
+pointLight.intensity = 1
 scene.add(pointLight)
+
+const white = gui.addFolder('lightWhite')
+
+//red
 
 const pointLight1 = new THREE.PointLight(0xff0000, 2)
 pointLight1.position.set(2.4,-2.2,-2)
 pointLight1.intensity = 7.7
-scene.add(pointLight1)
+// scene.add(pointLight1)
 
+const red = gui.addFolder('lightRed')
+
+//blue
 const pointLight2 = new THREE.PointLight(0x0000ff, 2)
 pointLight2.position.set(-2,1,-0.5)
 pointLight2.intensity = 7.7
-scene.add(pointLight2)
+// scene.add(pointLight2)
 
-gui.add(pointLight1.position, 'y').min(-3).max(3).step(0.1)
-gui.add(pointLight1.position, 'x').min(-3).max(3).step(0.1)
-gui.add(pointLight1.position, 'z').min(-3).max(3).step(0.1)
-gui.add(pointLight1, 'intensity').min(-10).max(10).step(0.1)
+const blue = gui.addFolder('lightBlue')
 
-gui.add(pointLight2.position, 'y').min(-3).max(3).step(0.1)
-gui.add(pointLight2.position, 'x').min(-3).max(3).step(0.1)
-gui.add(pointLight2.position, 'z').min(-3).max(3).step(0.1)
-gui.add(pointLight2, 'intensity').min(-10).max(10).step(0.1)
+//folder imports
+white.add(pointLight.position, 'y').min(-3).max(3).step(0.1)
+white.add(pointLight.position, 'x').min(-3).max(3).step(0.1)
+white.add(pointLight.position, 'z').min(-3).max(3).step(0.1)
+white.add(pointLight, 'intensity').min(-10).max(10).step(0.1)
 
+red.add(pointLight1.position, 'y').min(-3).max(3).step(0.1)
+red.add(pointLight1.position, 'x').min(-3).max(3).step(0.1)
+red.add(pointLight1.position, 'z').min(-3).max(3).step(0.1)
+red.add(pointLight1, 'intensity').min(-10).max(10).step(0.1)
+
+blue.add(pointLight2.position, 'y').min(-3).max(3).step(0.1)
+blue.add(pointLight2.position, 'x').min(-3).max(3).step(0.1)
+blue.add(pointLight2.position, 'z').min(-3).max(3).step(0.1)
+blue.add(pointLight2, 'intensity').min(-10).max(10).step(0.1)
+
+
+
+// const camera = gui.addFolder('camera')
 /**
  * Sizes
  */
@@ -105,7 +145,14 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 camera.position.x = 0
 camera.position.y = 0
 camera.position.z = 2
+
 scene.add(camera)
+
+const cameramain = gui.addFolder('camera')
+
+cameramain.add(camera.position, 'y').min(-3).max(3).step(0.1)
+cameramain.add(camera.position, 'x').min(-3).max(3).step(0.1)
+cameramain.add(camera.position, 'z').min(-3).max(3).step(0.1)
 
 // Controls
 // const controls = new OrbitControls(camera, canvas)
@@ -149,8 +196,6 @@ const clock = new THREE.Clock()
 
 document.addEventListener('scroll', updateSphere)
 
-
-
 const tick = () =>
 {
     targetX = mouseX * .001
@@ -163,6 +208,8 @@ const tick = () =>
     sphere.rotation.y = .5 * (targetX - sphere.rotation.y)
     sphere.rotation.x = .5 * (targetY - sphere.rotation.x)
     sphere.rotation.z = .5 * (targetY - sphere.rotation.x)
+
+    moon.rotation.y = 1 * elapsedTime
 
     if(mouseX > 0){
         starMesh.rotation.y = .02 * targetX
