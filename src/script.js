@@ -111,9 +111,6 @@ blue.add(pointLight2.position, 'x').min(-3).max(3).step(0.1)
 blue.add(pointLight2.position, 'z').min(-3).max(3).step(0.1)
 blue.add(pointLight2, 'intensity').min(-10).max(10).step(0.1)
 
-
-
-// const camera = gui.addFolder('camera')
 /**
  * Sizes
  */
@@ -146,7 +143,23 @@ camera.position.x = 0
 camera.position.y = 0
 camera.position.z = 2
 
+//add audio
+const listener = new THREE.AudioListener()
+camera.add(listener)
+
 scene.add(camera)
+
+//audio 
+const sound = new THREE.Audio( listener );
+//play audio 
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load( '/sounds/space.mp3', function( buffer ) {
+	sound.setBuffer( buffer );
+	sound.setLoop( true );
+	sound.setVolume( 0.1 );
+	// sound.play();
+});
+
 
 const cameramain = gui.addFolder('camera')
 
